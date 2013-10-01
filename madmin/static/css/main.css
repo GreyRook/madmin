@@ -1,0 +1,33 @@
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+
+.sidebar-nav {
+	padding: 9px 0;
+}
+
+@media ( max-width : 980px) {
+	/* Enable use of floated navbar text */
+	.navbar-text.pull-right {
+		float: none;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+}
+
+.stretch {
+	width: 100%;
+}
+
+#selection-size, #collection-name {
+	font-weight: bold;
+}
+
+#create-col-form {
+	margin-bottom: 0px;
+}
+
+.jsoneditor .menu button.collapse-editor {
+    background-position: -144px -48px;
+}

@@ -1,0 +1,32 @@
+{% extends 'rw:html5' %}
+
+{% block head %}
+{{ super() }}
+ <link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}" />
+ <link rel="stylesheet" type="text/css" href="{{ static('css/bootstrap.min.css') }}" />
+ <link rel="stylesheet" type="text/css" href="{{ static('css/bootstrap-responsive.min.css') }}" />
+ <script type="text/javascript" src="{{ static('js/madmin.js') }}"></script>
+ <script type="text/javascript" src="{{ static('js/bootstrap.min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<table id="help-table" class="table table-condensed">
+	<tr><th>Key</th><th>Description</th></tr>
+	<tr><td>Alt+Arrows</td><td>Move the caret up/down/left/right between fields</td></tr>
+	<tr><td>Shift+Alt+Arrows</td><td>Move field up/down/left/right</td></tr>
+	<tr><td>Ctrl+D</td><td>Duplicate field</td></tr>
+	<tr><td>Ctrl+Del</td><td>Remove field</td></tr>
+	<tr><td>Ctrl+Enter</td><td>Open link when on a field containing an url</td></tr>
+	<tr><td>Ctrl+Ins</td><td>Insert a new field with type auto</td></tr>
+	<tr><td>Ctrl+Shift+Ins</td><td>Append a new field with type auto</td></tr>
+	<tr><td>Ctrl+E</td><td>Expand or collapse field</td></tr>
+	<tr><td>Alt+End</td><td>Move the caret to the last field</td></tr>
+	<tr><td>Ctrl+F</td><td>Find</td></tr>
+	<tr><td>F3, Ctrl+G</td><td>Find next</td></tr>
+	<tr><td>Shift+F3, Ctrl+Shift+G</td><td>Find previous</td></tr>
+	<tr><td>Alt+Home</td><td>Move the caret to the first field</td></tr>
+	<tr><td>Ctrl+M</td><td>Show actions menu</td></tr>
+	<tr><td>Ctrl+Z</td><td>Undo last action</td></tr>
+	<tr><td>Ctrl+Shift+Z</td><td>Redo</td></tr>
+</table>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+
+<h1>Databases</h1>
+<table class="table table-striped table-bordered table-condensed">
+<tr>
+	<th>
+	</th>
+	<th>Database</th>
+	<th>Collections</th>
+	<th>Storage Size</th>
+</tr>
+{% for db in databases %}
+	<tr><td><a href="#" class="btn btn-mini btn-danger delete-database" db="{{ db }}"><i class="icon-trash icon-white"></i></a>
+		    <a href="#" class="btn btn-mini"><i class="icon-pencil"></i></a></td>
+		<td><a href="{{ url_for(handler.list_collections, db_name=db) }}">{{ db }}</a></td>
+		<td>{{ stats[db]['collections'] | int}}</td>
+		<td>{{ stats[db]['dataSize'] | filesizeformat }}</td>
+	</tr>
+{% endfor %}
+    <!--
+	<tr><td></td>
+		<td></td>
+		<td>
+			<form id="create-col-form" method="post" action="{# url_for(handler.create_database) #}" class="form-inline">
+			 	<div class="input-append">
+			        <input type="text" name="db-name" id="db-name" placeholder="Database Name" />
+			        <button class="btn btn-success" id="create-col-form-submit" type="button"><i class="icon-white icon-plus"></i></button>
+			    </div>
+			</form>
+		</td>
+	</tr>
+	 -->
+</table>
+<div id="confirm-delete" class="modal hide fade" tabindex="-1" role="dialog">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm Deletion</h3>
+  </div>
+  <div class="modal-body">
+    <p>Really delete the database '<span id="db-name"></span>'? This action cannot be undone!</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger" id="confirm-delete-collection-ok"><i class="icon-trash icon-white"></i> Delete collection</button>
+  </div>
+
+  <form id="delete-collection-form" method="post" action="{{ url_for(handler.delete_database) }}">
+  	<input type="hidden" id="db-name-input" name="db-name" value=""/>
+  </form>
+</div>
+
+{% endblock %}

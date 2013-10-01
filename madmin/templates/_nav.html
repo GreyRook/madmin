@@ -1,0 +1,30 @@
+<div class="well sidebar-nav">
+  <ul class="nav nav-list">
+    <li><a href="/">Home</a></li>
+    <li class="nav-header">Databases</li>
+    {% for db in databases %}
+    <li{{ ' class="active"' if db == current_db }}>
+        <a href="{{ url_for(handler.list_collections, db_name=db) }}">{{ db }}</a>
+    </li>
+    {% endfor %}
+
+    {% if collections is defined %}
+    <li class="nav-header">Collections</li>
+    {% for col in collections %}
+    <li{{ ' class="active"' if col == current_col }}>
+       <a href="{{ url_for(handler.select_collection, db_name=current_db, col_name=col) }}">{{ col }}</a>
+    </li>
+    {% endfor %}
+    {% endif %}
+
+    {#
+    <li class="nav-header">Saved Views</li>
+    <li><a href="#">Vllt speichert</a></li>
+    <li><a href="#">man sich ja</a></li>
+    <li><a href="#">was hier</a></li>
+    <li class="nav-header">Mongo</li>
+    <li><a href="#"><i class="icon-wrench"></i> Settings</a></li>
+    <li><a href="#"><i class="icon-off"></i> Disconnect</a></li>
+    #}
+  </ul>
+</div><!--/.well -->

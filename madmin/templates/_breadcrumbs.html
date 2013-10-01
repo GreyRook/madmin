@@ -1,0 +1,12 @@
+<ul class="breadcrumb">
+	<li><a href="/">Home</a> <span class="divider">/</span></li>
+	{% if current_db is defined %}
+	<li><a href="{{ url_for(handler.list_collections, db_name=current_db) }}">{{ current_db }}</a> <span class="divider">/</span></li>
+	{% endif %}
+	{% if current_col is defined %}
+	<li><a href="{{ url_for(handler.select_collection, db_name=current_db, col_name=current_col) }}">{{ current_col }}</a> <span class="divider">/</span></li>
+	{% endif %}
+	{% if document is defined %}
+	<li><a href="{{ url_for(handler.edit_document, db_name=current_db, col_name=current_col, doc=doc_id) }}">{{ doc_id }}</a> <span class="divider">/</span></li>
+	{% endif %}
+</ul>
