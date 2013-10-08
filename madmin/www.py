@@ -5,6 +5,7 @@ from rw.www import RequestHandler, get, post, url_for
 from tornado import gen
 from motor import Op, MotorClient
 from bson import ObjectId
+from bson.errors import InvalidId
 from bson.json_util import dumps, loads
 
 import rw.db
@@ -89,9 +90,14 @@ class Main(RequestHandler):
     @get('/m/<db_name>/<col_name>/<doc>')
     def edit_document(self, db_name, col_name, doc):
         """ Load a document and put it into the json editor. """
+        try:
+            doc = ObjectId(doc)
+        except InvalidId:
+            pass
+
         yield self.load_db(db_name, col_name)
         # Currently the _id field is not retrieved (_id:0) as it cannot be properly parsed by json.dumps
-        self['document'] = yield Op(db[db_name][col_name].find_one, {'_id':ObjectId(doc)}, {'_id':0})
+        self['document'] = yield Op(db[db_name][col_name].find_one, {'_id':doc}, {'_id':0})
         self['doc_id'] = doc # Add the document id in a separate variable as it is stripped from the result json doc
         self.finish(template='edit_doc.html')
 
@@ -107,10 +113,15 @@ class Main(RequestHandler):
     def update_document(self, db_name, col_name, doc):
         """ Process the json-editor created json and place it in the db.
         Updates when the _id is set, else it creates a new document. """
+        try:
+            doc = ObjectId(doc)
+        except InvalidId:
+            pass
+
         # TODO: use mongo's updateOrInsert?
         data = loads(self.get_argument('doc-data-field'))
         if doc:
-            yield Op(db[db_name][col_name].update, {'_id' : ObjectId(doc)}, data)
+            yield Op(db[db_name][col_name].update, {'_id' : doc}, data)
         else:
             yield Op(db[db_name][col_name].insert, data)
         self.redirect(url_for(self.select_collection, db_name=db_name, col_name=col_name))
@@ -119,7 +130,10 @@ class Main(RequestHandler):
     @post('/m/<db_name>/<col_name>/delete')
     def delete_documents(self, db_name, col_name):
         ids = self.request.arguments["selected-docs"]
-        ids = [ObjectId(_id) for _id in ids]
+        try:
+            ids = [ObjectId(_id) for _id in ids]
+        except InvalidId:
+            pass
         yield Op(db[db_name][col_name].remove, {'_id': {'$in': ids}})
         self.redirect(url_for(self.select_collection, db_name=db_name, col_name=col_name))
 
