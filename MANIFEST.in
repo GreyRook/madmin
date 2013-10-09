@@ -1,0 +1,3 @@
+recursive-include madmin/static *.*
+recursive-include madmin/templates *.*
+
