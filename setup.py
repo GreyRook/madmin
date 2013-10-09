@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='madmin',
+    url='https://github.com/GreyRook/madmin',
     description='Web based administration tool for mongodb',
     long_description=""""A tool to view and edit mongodb instances similar to PhpMyAdmin.\n
     MAdmin allows you to manage databases, collections and documents. """,
