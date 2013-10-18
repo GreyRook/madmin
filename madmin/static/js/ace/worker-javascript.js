@@ -4303,7 +4303,8 @@ klass:
 			return i;
 		}
 		if (token.id === "function" && nexttoken.id === "(") {
-			warning("Missing name in function declaration.");
+		    // Disabled this warning for use in map-reduce gui
+			//warning("Missing name in function declaration.");
 		} else {
 			error("Expected an identifier and instead saw '{a}'.",
 					nexttoken, nexttoken.value);
