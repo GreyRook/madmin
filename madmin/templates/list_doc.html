@@ -6,6 +6,7 @@
     <script type="text/javascript" src="{{ static('js/jsoneditor-min.js') }}"></script>
     <script type="text/javascript" src="{{ static('js/ace/ace.js') }}"></script>
     <script type="text/javascript" src="{{ static('js/ace/mode-json.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/ace/mode-javascript.js') }}"></script>
     <script type="text/javascript" src="{{ static('js/ace/theme-textmate.js') }}"></script>
     <script type="text/javascript" src="{{ static('js/ace/theme-jsoneditor.js') }}"></script>
     <script type="text/javascript" src="{{ static('js/jsonlint/jsonlint.js') }}"></script>
@@ -30,10 +31,36 @@
     <a title="New document" class="btn btn-success" href="{{ url_for(handler.create_document, db_name=current_db, col_name=current_col) }}">
         <i class="icon-plus icon-white"></i> Create new document
     </a>
+    <a href="#" class="btn">
+        <i class="icon-filter"></i> Map Reduce
+    </a>
     <a title="Delete selected documents" class="btn btn-danger" href="#" id="delete-selected-docs">
         <i class="icon-trash icon-white"></i> Delete selected
     </a>
   </div>
+</div>
+
+<div id="mapreduce" class="">
+    <form class="well span10">
+        <div class="row-fluid">
+            <div class="span6">
+                <div><h4>Map</h4></div>
+                <div id="map" style="height: 200px;" class="span12">function() {
+    emit( this.cust_id, this.amount);
+}</div>
+            </div>
+            <div class="span6">
+                <div><h4>Reduce</h4></div>
+                <div id="reduce" style="height: 200px;" class="span12">function(key, values) {
+    return Array.sum(values);
+}</div>
+            </div>
+        </div>
+        <div class="row-fluid" style="margin-top: 1em;">
+            <button class="btn" type="submit">Map&Reduce!</button>
+        </div>
+        
+    </form>
 </div>
 
 <form id="delete-docs-form" method="post" action="{{ url_for(handler.delete_documents, db_name=current_db, col_name=current_col) }}">
@@ -109,6 +136,13 @@
                   { "bSortable": false, "aTargets": [0, 1]}],
                 "fnDrawCallback" : table_rendered,
             });
+            
+            var map = ace.edit("map");
+            map.setTheme("ace/theme/textmate");
+            map.getSession().setMode("ace/mode/javascript");
+            var reduce = ace.edit("reduce");
+            reduce.setTheme("ace/theme/textmate");
+            reduce.getSession().setMode("ace/mode/javascript");
         } );
         
     </script>
