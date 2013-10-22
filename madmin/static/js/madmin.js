@@ -152,6 +152,14 @@ $(function() {
             $('#simple-editor input')[0].focus();
         });
     });
+    
+    $("#toggle-mapreduce").bind("click", function() {
+        if ($("#mapreduce").is(":visible")) {
+            $("#mapreduce").slideUp();
+        } else {
+            $("#mapreduce").slideDown();
+        }
+    })
 
     $('#mapreduce-submit').bind("click", map_reduce);
     $('#mapreduce-cancel').bind("click", function() {

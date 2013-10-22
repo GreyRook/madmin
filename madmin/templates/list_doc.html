@@ -30,7 +30,7 @@
     <a title="New document" class="btn btn-success" href="{{ url_for(handler.create_document, db_name=current_db, col_name=current_col) }}">
         <i class="icon-plus icon-white"></i> Create new document
     </a>
-    <a href="#" class="btn">
+    <a href="#" class="btn" id="toggle-mapreduce" data-toggle="button">
         <i class="icon-filter"></i> Map Reduce
     </a>
     <a title="Delete selected documents" class="btn btn-danger" href="#" id="delete-selected-docs">
@@ -39,7 +39,7 @@
   </div>
 </div>
 
-<div id="mapreduce">
+<div id="mapreduce" class="hide">
     <form class="well span10">
         <div class="row-fluid">
             <div class="span6">
@@ -58,6 +58,9 @@
         <div class="row-fluid btn-group" style="margin-top: 1em;">
             <a class="btn btn-primary" id="mapreduce-submit">
                 <i class="icon-cog icon-white"></i> Map&Reduce
+            </a>
+            <a class="btn" id="mapreduce-local">
+                <i class="icon-cog"></i> Map&Reduce Local
             </a>
             <a class="btn" id="mapreduce-cancel">
                 <i class=""></i> Cancel
