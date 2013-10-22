@@ -152,6 +152,13 @@ $(function() {
             $('#simple-editor input')[0].focus();
         });
     });
+
+    $('#mapreduce-submit').bind("click", map_reduce);
+    $('#mapreduce-cancel').bind("click", function() {
+        window.map = null;
+        window.reduce = null;
+        $('#doc-table').dataTable().fnReloadAjax();
+    });
 })
 
 // Send current query to datatable and call a refresh
@@ -159,7 +166,14 @@ window.current_query = null;
 function send_query(json) {
     window.current_query = json
     $('#doc-table').dataTable().fnReloadAjax();
-    
+}
+
+window.map = null;
+window.reduce = null;
+function map_reduce() {
+    window.map = window.editor_map.getValue();
+    window.reduce = window.editor_reduce.getValue();
+    $('#doc-table').dataTable().fnReloadAjax();
 }
 
 function table_rendered() {

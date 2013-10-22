@@ -157,12 +157,21 @@ class Main(RequestHandler):
         start = int(self.get_argument('iDisplayStart', 0))
         count = int(self.get_argument('iDisplayLength', 10))
         query_str = self.get_argument('query', None)
+        map_str = self.get_argument('map', None)
+        reduce_str = self.get_argument('reduce', None)
+        print map_str
+        print reduce_str
+
         if query_str:
             query = loads(query_str)
         else:
             query = None
-        #query = None
-        search = self.get_argument('sSearch', None).lower()
+
+        if map_str and reduce_str:
+            # TODO: Do some mapreduce!
+            pass
+
+        search = self.get_argument('sSearch', "").lower()
         cursor = db[db_name][col_name].find(query)
         total, filtered, db_data = yield [Op(db[db_name][col_name].count), \
                                          Op(cursor.count), \
