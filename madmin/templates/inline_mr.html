@@ -1,0 +1,127 @@
+{% extends 'rw:html5' %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ static('css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ static('css/bootstrap-responsive.min.css') }}" />
+    <script type="text/javascript" src="{{ static('js/madmin.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/types.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/ace/ace.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/ace/mode-json.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/ace/theme-textmate.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/jsonlint/jsonlint.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div id="mapreduce" class="well">
+        <div class="row-fluid">
+            <div class="span6">
+                <h4 class="offset1">Map</h4>
+                <div id="map" style="height: 200px; margin-bottom: 2em;" class="span12">{{ map }}</div><br>
+                <div class="text-center">
+                    <a class="btn btn-large" id="mapreduce-map">
+                        <i class="icon-random"></i> Map
+                    </a>
+                </div>
+            </div>
+            <div class="span6">
+                <div><h4>Reduce</h4></div>
+                <div id="reduce" style="height: 200px; margin-bottom: 2em;" class="span12">{{ reduce }}</div><br>
+                <div class="text-center">
+                    <a class="btn btn-large" id="mapreduce-reduce">
+                        <i class="icon-resize-small"></i> Reduce
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="span6">
+            <h3>Map</h3>
+            <table id="map-table" class="table table-bordered" style="table-layout: fixed; word-wrap: break-word;">
+                <thead>
+                    <tr><th>Key</th><th>Items</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="span6">
+            <h3>Reduce</h3>
+            <table id="reduce-table" class="table table-bordered" style="table-layout: fixed; word-wrap: break-word;">
+                <thead>
+                    <tr><th>Key</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+map_func = {{ map }}
+
+reduce_func = {{ reduce }}
+
+data = {{ data|json }}
+
+{# MongoDB like emit-function #}
+function emit(k, v) {
+    if (!mapped.hasOwnProperty(k)) {
+        mapped[k] = [];
+    }
+    mapped[k].push(v);
+}
+
+function map() {
+    mapped = {}
+    $.each(data, function(index, value) {
+        value.map();
+    });
+    $('#map-table tbody').empty();
+    $.each(mapped, function(i, value) {
+        $('#map-table tbody').append("<tr><td>"+i+"</td><td>"+value+"</td></tr>");
+    })
+}
+
+function reduce() {
+    {# Reduce data #}
+    reduced = {}
+    for (var key in mapped) {
+        reduced[key] = reduce_func(key, mapped[key]);
+    }
+    $('#reduce-table tbody').empty();
+    $.each(reduced, function(i, value) {
+        $('#reduce-table tbody').append("<tr><td>"+i+"</td><td>"+value+"</td></tr>");
+    })
+}
+
+$(function() {
+    {# Map data #}
+    $.each(data, function(index, value) {
+        value.map = map_func;
+    });
+    
+    {# Setup editors as read only #}
+    window.editor_map = ace.edit("map");
+    window.editor_map.setTheme("ace/theme/textmate");
+    window.editor_map.getSession().setMode("ace/mode/javascript");
+    window.editor_map.setReadOnly(true);
+    window.editor_reduce = ace.edit("reduce");
+    window.editor_reduce.setTheme("ace/theme/textmate");
+    window.editor_reduce.getSession().setMode("ace/mode/javascript");
+    window.editor_reduce.setReadOnly(true);
+    
+    $('#mapreduce-map').bind("click", map);
+    $('#mapreduce-reduce').bind("click", reduce);
+});
+</script>
+{% endblock %}
+
+

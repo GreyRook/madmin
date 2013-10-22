@@ -200,7 +200,18 @@ class Main(RequestHandler):
         })
 
     @gen.engine
-    @get('/mapred/<db_name>/<col_name>/')
+    @post('/mapred/<db_name>/<col_name>/')
     def inline_mr(self, db_name, col_name):
-        pass
+        self['map'] = self.get_argument('local-mr-map', None)
+        self['reduce'] = self.get_argument('local-mr-reduce', None)
+        query_str = self.get_argument("local-mr-query", None)
+
+        if query_str:
+            query = loads(query_str)
+        else:
+            query = None
+        cursor = db[db_name][col_name].find(query)
+        self['data']  = yield Op(cursor.to_list)
+        # TODO: Query db with argument 'query'
+        self.finish(template='inline_mr.html')
 

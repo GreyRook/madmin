@@ -84,20 +84,6 @@ $(function() {
         $("#confirm-delete").modal();
     });
 
-    // Configure extended and simple json editor for filtering
-    function send_if_valid() {
-        // This flag prevents change events while the editor is being set up
-        if (!window.editor_loaded) {
-            return;
-        }
-        // Catch exceptions or else the cursor will not move behind the typed char.
-        try {
-            send_query(JSON.stringify(window.jsoneditor.get()));
-        } catch(err) {
-
-        }
-    }
-    
     // Auto parse json input on text change
     $("#query").bind("input", function() {
         var data = null;
@@ -112,17 +98,6 @@ $(function() {
         }
         send_query(JSON.stringify(data));
     });
-
-    window.editor_loaded = false;
-    var container = document.getElementById("extended-editor-editor");
-    var options = {
-            mode: 'code',
-            search: false,
-            modes: ['code', 'tree'],
-            change: send_if_valid,
-        };
-    window.jsoneditor = new jsoneditor.JSONEditor(container, options);
-    window.editor_loaded = true;
 
     $('#extend-editor').bind('click', function() {
         $('#simple-editor').hide(0);
@@ -166,6 +141,13 @@ $(function() {
         window.map = null;
         window.reduce = null;
         $('#doc-table').dataTable().fnReloadAjax();
+    });
+    
+    $('#mapreduce-local').bind("click", function() {
+        $('#local-mr-map').val(window.editor_map.getValue());
+        $('#local-mr-reduce').val(window.editor_reduce.getValue());
+        $('#local-mr-query').val(window.current_query);
+        $('#local-mr-form').submit();
     });
 })
 

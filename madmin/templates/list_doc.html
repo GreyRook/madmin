@@ -66,7 +66,8 @@
         </a>
     </div>
 </div>
-<form id="local-mr-form" target="_blank" method="post" action="">
+<form class="hide" id="local-mr-form" target="_blank" method="post"
+action="{{ url_for(handler.inline_mr, db_name=current_db, col_name=current_col) }}">
     <input type="hidden" name="local-mr-map" id="local-mr-map" />
     <input type="hidden" name="local-mr-reduce" id="local-mr-reduce" />
     <input type="hidden" name="local-mr-query" id="local-mr-query" />
@@ -121,9 +122,34 @@
         }
 
         $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+        
+         // Configure extended and simple json editor for filtering
+        function send_if_valid() {
+            // This flag prevents change events while the editor is being set up
+            if (!window.editor_loaded) {
+                return;
+            }
+            // Catch exceptions or else the cursor will not move behind the typed char.
+            try {
+                send_query(JSON.stringify(window.jsoneditor.get()));
+            } catch(err) {
 
+            }
+        }
+     
         /* Table initialisation */
         $(document).ready(function() {
+            window.editor_loaded = false;
+            var container = document.getElementById("extended-editor-editor");
+            var options = {
+                    mode: 'code',
+                    search: false,
+                    modes: ['code', 'tree'],
+                    change: send_if_valid,
+                };
+            window.jsoneditor = new jsoneditor.JSONEditor(container, options);
+            window.editor_loaded = true;
+            
             $('#doc-table').dataTable( {
                 "sPaginationType": "bootstrap",
                 "bProcessing": true,
