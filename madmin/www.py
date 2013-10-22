@@ -213,5 +213,5 @@ class Main(RequestHandler):
         cursor = db[db_name][col_name].find(query)
         self['data']  = yield Op(cursor.to_list)
         # TODO: Query db with argument 'query'
-        self.finish(template='inline_mr.html')
+        self.finish(template='local_mr.html')
 
