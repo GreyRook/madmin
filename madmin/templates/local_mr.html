@@ -16,6 +16,27 @@
 
 {% block body %}
 <div class="container">
+<div class="row">
+    <div class="offset2 span8 well">
+        Use your browser's js capabilities to debug your MapReduce code. The following identifiers are available:
+        <dl class="dl-horizontal">
+            <dt>map_func</dt>
+            <dd>Your mapping function</dd>
+            <dt>reduce_func</dt>
+            <dd>Your reduce function</dd>
+            <dt>data</dt>
+            <dd>The queried data from the db</dd>
+            <dt>map()</dt>
+            <dd>Function to call the map-step</dd>
+            <dt>mapped</dt>
+            <dd>The map of id->values after the map-step</dd>
+            <dt>reduce()</dt>
+            <dd>Function to call the reduce-step</dd>
+            <dt>reduced</dt>
+            <dd>The map of id->value after the reduce-step</dd>
+        </dl>
+    </div>
+</div>
     <div id="mapreduce" class="well">
         <div class="row-fluid">
             <div class="span6">
