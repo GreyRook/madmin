@@ -167,15 +167,17 @@ class Main(RequestHandler):
         else:
             query = None
 
-        if map_str and reduce_str:
-            # TODO: Do some mapreduce!
-            pass
-
         search = self.get_argument('sSearch', "").lower()
-        cursor = db[db_name][col_name].find(query)
-        total, filtered, db_data = yield [Op(db[db_name][col_name].count), \
-                                         Op(cursor.count), \
-                                         Op(cursor.limit(count).skip(start).to_list)]
+
+        if map_str and reduce_str:
+            db_data = yield Op(db[db_name][col_name].inline_map_reduce, map_str, reduce_str, query=query)
+            total = yield Op(db[db_name][col_name].count)
+            filtered = len(db_data)
+        else:
+            cursor = db[db_name][col_name].find(query)
+            total, filtered, db_data = yield [Op(db[db_name][col_name].count), \
+                                             Op(cursor.count), \
+                                             Op(cursor.limit(count).skip(start).to_list)]
         data = []
         for entry in db_data:
             if entry.has_key('_id'):
