@@ -159,8 +159,6 @@ class Main(RequestHandler):
         query_str = self.get_argument('query', None)
         map_str = self.get_argument('map', None)
         reduce_str = self.get_argument('reduce', None)
-        print map_str
-        print reduce_str
 
         if query_str:
             query = loads(query_str)
@@ -200,4 +198,9 @@ class Main(RequestHandler):
             "iTotalDisplayRecords": filtered,
             "aaData": data
         })
+
+    @gen.engine
+    @get('/mapred/<db_name>/<col_name>/')
+    def inline_mr(self, db_name, col_name):
+        pass
 
