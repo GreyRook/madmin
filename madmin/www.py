@@ -90,15 +90,11 @@ class Main(RequestHandler):
     @get('/m/<db_name>/<col_name>/<doc>')
     def edit_document(self, db_name, col_name, doc):
         """ Load a document and put it into the json editor. """
-        try:
-            doc = ObjectId(doc)
-        except InvalidId:
-            pass
-
+        query = loads(urllib.unquote(doc))
         yield self.load_db(db_name, col_name)
         # Currently the _id field is not retrieved (_id:0) as it cannot be properly parsed by json.dumps
-        self['document'] = yield Op(db[db_name][col_name].find_one, {'_id':doc}, {'_id':0})
-        self['doc_id'] = doc # Add the document id in a separate variable as it is stripped from the result json doc
+        self['document'] = yield Op(db[db_name][col_name].find_one, query, {'_id':0})
+        self['doc_id'] = query['_id'] # Add the document id in a separate variable as it is stripped from the result json doc
         self.finish(template='edit_doc.html')
 
     @gen.engine
@@ -179,11 +175,13 @@ class Main(RequestHandler):
         data = []
         for entry in db_data:
             if entry.has_key('_id'):
-                _id = str(entry['_id'])
+                _id = entry['_id']
                 del(entry['_id'])
             else:
                 _id = ''
-            row = ["", "", _id, dumps(entry)]
+            edit_button = '<a title="Edit this document" class="btn btn-mini" href="{}"><i class="icon-edit"></i></a>'.format(
+                              url_for(self.edit_document, db_name=db_name, col_name=col_name, doc=urllib.quote(dumps({'_id': _id}))))
+            row = ["", edit_button, str(_id), dumps(entry)]
             if search:
                 for field in row:
                     if search in field.lower():
