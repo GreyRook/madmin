@@ -117,7 +117,6 @@ action="{{ url_for(handler.inline_mr, db_name=current_db, col_name=current_col) 
     <script>
         var del_url = "{{ url_for(handler.edit_document, db_name=current_db, col_name=current_col, doc='') }}";
         function addRowControls(nRow, aData, iDataIndex) {
-            $('td:nth-child(1)', nRow).html('<input title="Mark for deletion" type="checkbox" class="row-selector" name="selected-docs" value="'+ aData[2] +'"/>');
         }
 
         $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );

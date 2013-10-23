@@ -94,6 +94,7 @@ class Main(RequestHandler):
         yield self.load_db(db_name, col_name)
         # Currently the _id field is not retrieved (_id:0) as it cannot be properly parsed by json.dumps
         self['document'] = yield Op(db[db_name][col_name].find_one, query, {'_id':0})
+        self['escaped_id'] = doc
         self['doc_id'] = query['_id'] # Add the document id in a separate variable as it is stripped from the result json doc
         self.finish(template='edit_doc.html')
 
@@ -109,15 +110,11 @@ class Main(RequestHandler):
     def update_document(self, db_name, col_name, doc):
         """ Process the json-editor created json and place it in the db.
         Updates when the _id is set, else it creates a new document. """
-        try:
-            doc = ObjectId(doc)
-        except InvalidId:
-            pass
-
         # TODO: use mongo's updateOrInsert?
         data = loads(self.get_argument('doc-data-field'))
         if doc:
-            yield Op(db[db_name][col_name].update, {'_id' : doc}, data)
+            query = loads(urllib.unquote(doc))
+            yield Op(db[db_name][col_name].update, query, data)
         else:
             yield Op(db[db_name][col_name].insert, data)
         self.redirect(url_for(self.select_collection, db_name=db_name, col_name=col_name))
@@ -127,7 +124,7 @@ class Main(RequestHandler):
     def delete_documents(self, db_name, col_name):
         ids = self.request.arguments["selected-docs"]
         try:
-            ids = [ObjectId(_id) for _id in ids]
+            ids = [loads(urllib.unquote(doc))['_id'] for doc in ids]
         except InvalidId:
             pass
         yield Op(db[db_name][col_name].remove, {'_id': {'$in': ids}})
@@ -179,9 +176,11 @@ class Main(RequestHandler):
                 del(entry['_id'])
             else:
                 _id = ''
+            delete_checkbox = '<input title="Mark for deletion" type="checkbox" class="row-selector" name="selected-docs" value="{}"/>'.format(
+                              urllib.quote(dumps({'_id': _id})))
             edit_button = '<a title="Edit this document" class="btn btn-mini" href="{}"><i class="icon-edit"></i></a>'.format(
                               url_for(self.edit_document, db_name=db_name, col_name=col_name, doc=urllib.quote(dumps({'_id': _id}))))
-            row = ["", edit_button, str(_id), dumps(entry)]
+            row = [delete_checkbox, edit_button, str(_id), dumps(entry)]
             if search:
                 for field in row:
                     if search in field.lower():
@@ -210,6 +209,5 @@ class Main(RequestHandler):
             query = None
         cursor = db[db_name][col_name].find(query)
         self['data']  = yield Op(cursor.to_list)
-        # TODO: Query db with argument 'query'
         self.finish(template='local_mr.html')
 

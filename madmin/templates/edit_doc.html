@@ -44,7 +44,7 @@
 
 </script>
 
-<form id="update-document-form" method="post" action="{{ url_for(handler.update_document, db_name=current_db, col_name=current_col, doc=doc_id) }}">
+<form id="update-document-form" method="post" action="{{ url_for(handler.update_document, db_name=current_db, col_name=current_col, doc=escaped_id) }}">
 <input type="hidden" id="doc-data-field" name="doc-data-field" value="" />
 </form>
 
