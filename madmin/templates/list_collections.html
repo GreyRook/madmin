@@ -26,8 +26,12 @@
 	<tr><td><a href="#" class="btn btn-mini btn-danger delete-collection" col="{{ col }}"><i class="icon-trash icon-white"></i></a>
 		    <a href="#" class="btn btn-mini"><i class="icon-pencil"></i></a></td>
 		<td><a href="{{ url_for(handler.select_collection, db_name=current_db, col_name=col) }}">{{ col }}</a></td>
-		<td>{{ stats[col]['count'] | int}}</td>
-		<td>{{ stats[col]['storageSize'] | filesizeformat }}</td>
+        {% if stats[col] %}
+    		<td>{{ stats[col]['count'] | int}}</td>
+    		<td>{{ stats[col]['storageSize'] | filesizeformat }}</td>
+        {% else %}
+            <td class="text-error">NA</td><td class="text-error">NA</td>
+        {% endif %}
 	</tr>
 {% endfor %}
 		<td></td>

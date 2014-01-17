@@ -7,11 +7,17 @@ from motor import Op, MotorClient
 from bson import ObjectId
 from bson.errors import InvalidId
 from bson.json_util import dumps, loads
+from pymongo.errors import OperationFailure
 
 import rw.db
 
-
-db = MotorClient(host=rw.cfg['mongodb']['host']).open_sync()
+if rw.cfg['mongodb'].has_key('user'):
+    db = MotorClient(host="mongodb://{}:{}@{}/{}".format(rw.cfg['mongodb']['user'],
+                                            rw.cfg['mongodb']['password'],
+                                            rw.cfg['mongodb']['host'],
+                                            rw.cfg['mongodb']['db'])).open_sync()
+else:
+    db = MotorClient(host=rw.cfg['mongodb']['host']).open_sync()
 
 
 class Main(RequestHandler):
@@ -19,7 +25,10 @@ class Main(RequestHandler):
     @gen.engine
     @get('/')
     def database_index(self):
-        databases = yield Op(db.database_names)
+        if rw.cfg['mongodb'].has_key('db'):
+            databases = [rw.cfg['mongodb']['db']]
+        else:
+            databases = yield Op(db.database_names)
         self['databases'] = []
         self['stats'] = {}
         for db_name in databases:
@@ -31,7 +40,10 @@ class Main(RequestHandler):
     @get('/m/<db_name>')
     def list_collections(self, db_name):
         """ Open a database and lists all collections within. """
-        self['databases'] = yield Op(db.database_names)
+        if rw.cfg['mongodb'].has_key('db'):
+            databases = [rw.cfg['mongodb']['db']]
+        else:
+            databases = yield Op(db.database_names)
         self['current_db'] = db_name
 
         collections = yield Op(db[db_name].collection_names)
@@ -39,7 +51,10 @@ class Main(RequestHandler):
         self['stats'] = {}
         for collection in collections:
             self['collections'].append(collection)
-            self['stats'][collection] = yield Op(db[db_name].command, "collstats", collection)
+            try:
+                self['stats'][collection] = yield Op(db[db_name].command, "collstats", collection)
+            except OperationFailure:
+                self['stats'][collection] = None
 
         self.finish(template='list_collections.html')
 
@@ -136,7 +151,10 @@ class Main(RequestHandler):
 
     @gen.coroutine
     def load_db(self, db_name=None, col_name=None):
-        self['databases'] = yield Op(db.database_names)
+        if rw.cfg['mongodb'].has_key('db'):
+            databases = [rw.cfg['mongodb']['db']]
+        else:
+            databases = yield Op(db.database_names)
         if db_name is not None:
             self['collections'] = yield Op(db[db_name].collection_names)
             self['current_db'] = db_name
